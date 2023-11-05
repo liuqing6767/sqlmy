@@ -1,12 +1,12 @@
-`sqlmy` is a tiny experience of my bussiness develop where need access relation database.
+`sqlmy` 是我对需要访问数据库的业务开发的一点小小的心得。
 
-# yet another style
-normally, `dao` layer use as access database, but there are so many styles. here offer yet another style(maybe easiest):
-- define one struct name A similar as table name for one table as carry of query's result
-- define one struct name as AParam as carry of where and insert data
-- define one CURD sigleton for accessing database
+# 只不过是另外一个风格
+通常， `dao` 用于访问数据库。现有风格多种多样，这里提供的也只不过是另外一个风格（可能是最简单的）：
+- 定义一个名字和表名类似结构体A，用来承载查询的结果
+- 定义一个名字为 `AParam` 的结构体，用来承载 where 和 insert 的数据
+- 定义一个CURD 单例，用来访问数据库
 
-for example, we have one student table:
+举例，我们有一个学生表：
 ```
 CREATE TABLE students (
     id bigint(64),
@@ -15,17 +15,17 @@ CREATE TABLE students (
 )
 ```
 
-we can define two structs:
+我们可以定义两个数据结构：
 ```
 var StudentCURD = NewCURD[Student, StudentParam]("students")
 
-type Student struct {
+type Student struct
 	ID     int64  `db:"id"`
 	Name   string `db:"name"`
 	Status int    `db:"status"`
 }
 
-type StudentParam struct {
+type StudentParam struct
 	ID     *int64  `db:"id"`
 	IDs    []int64 `db:"id,in"`
 	Name   *string `db:"name"`
@@ -37,12 +37,12 @@ type StudentParam struct {
 }
 ```
 
-then define one CURD sigleton:
+在定义一个 CURD 单例：
 ```
 var StudentCURD = NewCURD[Student, StudentParam]("students")
 ```
 
-we can do most normal things:
+我们可以做绝大多数的事情了：
 ```
 // QueryOne
 // SELECT * FROM students
@@ -131,7 +131,7 @@ lastInsertedID, err := StudentCURD.InsertList(ctx, []*StudentParam{
 )
 ```
 
-# API
+# API列表
 - Context with Conn
 	- WithConn(ctx context.Context, connFactory func() (conn Conn, err error)) (context.Context, error) 
 	- GetExecutor(ctx context.Context) Executor 

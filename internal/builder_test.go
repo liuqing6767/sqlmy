@@ -1,4 +1,4 @@
-package sqlmy
+package internal
 
 import (
 	"reflect"
@@ -28,7 +28,7 @@ func Test_tagSplitter(t *testing.T) {
 			name:    "case3",
 			dbTag:   "a,",
 			wantKey: "a",
-			wantOpt: "",
+			wantOpt: "=",
 		},
 		{
 			name:    "case4",
@@ -59,24 +59,24 @@ func Test_tagSplitter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotKey, gotOpt := tagSplitter(tt.dbTag)
 			if gotKey != tt.wantKey {
-				t.Errorf("tagSplitter() gotKey = %v, want %v", gotKey, tt.wantKey)
+				t.Errorf("tagSplitter() gotKey: `%v`, want `%v`", gotKey, tt.wantKey)
 			}
 			if gotOpt != tt.wantOpt {
-				t.Errorf("tagSplitter() gotOpt = %v, want %v", gotOpt, tt.wantOpt)
+				t.Errorf("tagSplitter() gotOpt: `%v`, want `%v`", gotOpt, tt.wantOpt)
 			}
 		})
 	}
 }
 
 type Person struct {
-	ID      int64  `ddb:"id,="`
-	Name    string `ddb:"name,!="`
-	IsMan   bool   `ddb:"is_man"`
+	ID      int64  `db:"id,="`
+	Name    string `db:"name,!="`
+	IsMan   bool   `db:"is_man"`
 	Nation  string
-	City    string  `ddb:"-"`
-	Age     *int    `ddb:"age,"`
-	Company *string `ddb:"company"`
-	Nums    []int   `ddb:"nums,in"`
+	City    string  `db:"-"`
+	Age     *int    `db:"age,"`
+	Company *string `db:"company"`
+	Nums    []int   `db:"nums,in"`
 }
 
 var age = 6
@@ -152,7 +152,7 @@ func TestStruct2Wheres(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Struct2Where(tt.structValue); !reflect.DeepEqual(got, tt.want) {
+			if got := struct2Where("db", tt.structValue); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Struct2Wheres() = \n%v, want \n%v", got, tt.want)
 			}
 		})
